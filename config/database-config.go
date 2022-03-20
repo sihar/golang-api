@@ -4,26 +4,21 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/joho/godotenv"
 	"github.com/putukrisna6/golang-api/entity"
-	"gorm.io/driver/mysql"
+	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
 func SetupDatabaseConnection() *gorm.DB {
-	errEnv := godotenv.Load()
-
-	if errEnv != nil {
-		panic("failed to load env")
-	}
-
 	dbUser := os.Getenv("DB_USER")
-	dbPass := os.Getenv("DB_PASS")
+	dbPass := os.Getenv("DB_PASSWORD")
 	dbHost := os.Getenv("DB_HOST")
 	dbName := os.Getenv("DB_NAME")
+	dbPort := os.Getenv("DB_PORT")
 
-	dsn := fmt.Sprintf("%s:%s@tcp(%s:3306)/%s?charset=utf8mb4&parseTime=True&loc=Local", dbUser, dbPass, dbHost, dbName)
-	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
+	dsn := fmt.Sprintf("host=%s user=%s password=%s port=%s dbname=%s sslmode=require TimeZone=Asia/Jakarta", dbHost, dbUser, dbPass, dbPort, dbName)
+
+	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 
 	if err != nil {
 		panic("failed to connect to database")
